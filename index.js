@@ -28,5 +28,19 @@ mongoose
   .catch((err) => console.error("Error connecting to MongoDB", err));
 
 // Start Server
+
+
+app.get('/resume/:filename', (req, res) => {
+  const { filename } = req.params;
+  const filePath = path.join(__dirname, 'uploads', filename);  // Adjust this path based on where your files are stored
+
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error('Error serving resume:', err);
+      res.status(500).send("Error serving resume.");
+    }
+  });
+});
+
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
