@@ -1,21 +1,12 @@
-const JobApplication = require("../models/JobApplictionModel");
+const JobApplication = require("../models/JobApplicationModel");
 
 // Create a new job application
-//new
 const submitJobApplication = async (req, res) => {
   try {
     const { name, mobile, email, experience, position, city, info } = req.body;
     const resume = req.file ? req.file.path : null;
 
-    if (
-      !name ||
-      !mobile ||
-      !email ||
-      !experience ||
-      !position ||
-      !city ||
-      !resume
-    ) {
+    if (!name || !mobile || !email || !experience || !position || !city || !resume) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -26,8 +17,7 @@ const submitJobApplication = async (req, res) => {
 
     if (existingApplication) {
       return res.status(400).json({
-        message:
-          "This email or mobile number is already associated with an application.",
+        message: "This email or mobile number is already associated with an application.",
       });
     }
 

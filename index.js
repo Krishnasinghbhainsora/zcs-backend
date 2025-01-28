@@ -23,13 +23,9 @@ app.use("/admin", adminRoutes);
 
 // MongoDB Connection
 mongoose
-  .connect(process.env.MONGODB_URL)
-  .then(() => {
-    console.log("Connected to MongoDB Successfully");
-  })
-  .catch((err) => {
-    console.error("Error connecting to MongoDB", err);
-  });
+  .connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("Connected to MongoDB Successfully"))
+  .catch((err) => console.error("Error connecting to MongoDB", err));
 
 // Start Server
 const PORT = process.env.PORT || 8000;

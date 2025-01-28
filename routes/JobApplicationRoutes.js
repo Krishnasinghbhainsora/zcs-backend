@@ -30,10 +30,9 @@ const upload = multer({
   },
 });
 
+// Routes
 router.post("/submit", upload.single("resume"), submitJobApplication);
-
 router.get("/", getAllApplications);
-
 router.delete("/:id", deleteJobApplication);
 
 module.exports = router;
