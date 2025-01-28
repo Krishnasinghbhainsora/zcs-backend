@@ -60,20 +60,18 @@ const getAllApplications = async (req, res) => {
 
 const downloadResume = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const application = await JobApplication.findById(id);
-    if (!application) {
-      return res.status(404).json({ message: "Application not found." });
-    }
-
-    const resumeUrl = application.resume;
-    return res.redirect(resumeUrl);
+      const { id } = req.params;
+      const application = await JobApplication.findById(id);
+      if (!application) {
+          return res.status(404).json({ message: "Application not found." });
+      }
+      res.json({ resumeUrl: application.resume }); // Resume URL भेजें
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error. Please try again later." });
+      console.error(error);
+      res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
+
 
 const deleteJobApplication = async (req, res) => {
   try {
