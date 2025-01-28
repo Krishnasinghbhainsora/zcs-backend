@@ -1,16 +1,22 @@
 const JobApplication = require("../models/JobApplictionModel");
-const path = require("path");
+const cloudinary = require("../config/cloudinary");
 const fs = require("fs");
 
-// Submit a new job application
 const submitJobApplication = async (req, res) => {
   try {
     const { name, mobile, email, experience, position, city, info } = req.body;
-    const resume = req.file ? req.file.filename : null;
 
-    if (!name || !mobile || !email || !experience || !position || !city || !resume) {
+    if (!name || !mobile || !email || !experience || !position || !city || !req.file) {
       return res.status(400).json({ message: "All fields are required." });
     }
+
+    // Upload resume to Cloudinary
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "resumes",
+      resource_type: "auto",
+    });
+
+    const resumeUrl = result.secure_url;
 
     // Check for existing application
     const existingApplication = await JobApplication.findOne({ $or: [{ email }, { mobile }] });
@@ -26,11 +32,15 @@ const submitJobApplication = async (req, res) => {
       experience,
       position,
       city,
-      resume,
+      resume: resumeUrl,
       info,
     });
 
     await newApplication.save();
+
+    // Remove file from local storage after upload
+    fs.unlinkSync(req.file.path);
+
     res.status(201).json({ message: "Application submitted successfully!" });
   } catch (error) {
     console.error(error);
@@ -38,7 +48,6 @@ const submitJobApplication = async (req, res) => {
   }
 };
 
-// Fetch all job applications
 const getAllApplications = async (req, res) => {
   try {
     const applications = await JobApplication.find();
@@ -49,30 +58,23 @@ const getAllApplications = async (req, res) => {
   }
 };
 
-// Download resume
-const downloadResume = (req, res) => {
+const downloadResume = async (req, res) => {
   try {
-    const { filename } = req.params;
-    const filePath = path.join(__dirname, "../uploads", filename);
+    const { id } = req.params;
 
-    // Check if file exists
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ message: "File not found." });
+    const application = await JobApplication.findById(id);
+    if (!application) {
+      return res.status(404).json({ message: "Application not found." });
     }
 
-    res.download(filePath, (err) => {
-      if (err) {
-        console.error(err);
-        res.status(500).json({ message: "Error downloading file." });
-      }
-    });
+    const resumeUrl = application.resume;
+    return res.redirect(resumeUrl);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
 
-// Delete job application
 const deleteJobApplication = async (req, res) => {
   try {
     const { id } = req.params;

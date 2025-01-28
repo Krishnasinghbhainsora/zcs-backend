@@ -1,6 +1,6 @@
-const express = require("express");
 const multer = require("multer");
 const path = require("path");
+const express = require("express");
 const {
   submitJobApplication,
   getAllApplications,
@@ -10,11 +10,8 @@ const {
 
 const router = express.Router();
 
-// Configure multer for file uploads
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/");
-  },
+  destination: "uploads/",
   filename: (req, file, cb) => {
     cb(null, `${Date.now()}-${file.originalname}`);
   },
@@ -23,21 +20,21 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
-    const fileTypes = /pdf|doc|docx/;
-    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = fileTypes.test(file.mimetype);
+    const allowedTypes = /pdf|doc|docx/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
 
     if (extname && mimetype) {
-      return cb(null, true);
+      cb(null, true);
     } else {
-      cb("Only .pdf, .doc, .docx formats are allowed!");
+      cb("Only .pdf, .doc, and .docx formats are allowed!");
     }
   },
 });
 
 router.post("/submit", upload.single("resume"), submitJobApplication);
 router.get("/", getAllApplications);
-router.get("/download/:filename", downloadResume);
+router.get("/download/:id", downloadResume);
 router.delete("/:id", deleteJobApplication);
 
 module.exports = router;
