@@ -1,6 +1,7 @@
 const JobApplication = require("../models/JobApplictionModel");
 
 // Create a new job application
+//new
 const submitJobApplication = async (req, res) => {
   try {
     const { name, mobile, email, experience, position, city, info } = req.body;
