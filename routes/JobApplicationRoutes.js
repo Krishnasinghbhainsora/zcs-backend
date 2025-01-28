@@ -4,9 +4,8 @@ const upload = require("../middlewares/Upload");
 
 const router = express.Router();
 
-// Job application routes
-router.post("/submit", upload, submitJobApplication); // Submit an application
-router.get("/", getAllApplications); // Get all applications
-router.delete("/:id", deleteJobApplication); // Delete an application by ID
+router.post("/submit", upload, submitJobApplication);
+router.get("/", getAllApplications);
+router.delete("/:id", deleteJobApplication);
 
 module.exports = router;

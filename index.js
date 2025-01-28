@@ -17,6 +17,11 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use("/uploads", express.static("uploads"));
 
+// Ensure uploads directory exists
+if (!fs.existsSync("uploads")) {
+  fs.mkdirSync("uploads");
+}
+
 // Routes
 app.use("/job-application", jobApplicationRoutes);
 app.use("/admin", adminRoutes);

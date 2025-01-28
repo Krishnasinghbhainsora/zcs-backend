@@ -7,7 +7,7 @@ const submitJobApplication = async (req, res) => {
     const resume = req.file ? req.file.path : null;
 
     if (!name || !mobile || !email || !experience || !position || !city || !resume) {
-      return res.status(400).json({ message: "All fields are required, including the resume." });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     // Check if email or mobile already exists
@@ -35,7 +35,7 @@ const submitJobApplication = async (req, res) => {
     await newApplication.save();
     res.status(201).json({ message: "Application submitted successfully!" });
   } catch (error) {
-    console.error("Submit Application Error:", error.message);
+    console.error(error);
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
@@ -46,7 +46,7 @@ const getAllApplications = async (req, res) => {
     const applications = await JobApplication.find();
     res.status(200).json(applications);
   } catch (error) {
-    console.error("Get Applications Error:", error.message);
+    console.error(error);
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
@@ -63,9 +63,10 @@ const deleteJobApplication = async (req, res) => {
 
     res.status(200).json({ message: "Application deleted successfully" });
   } catch (error) {
-    console.error("Delete Application Error:", error.message);
+    console.error(error);
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
 
 module.exports = { submitJobApplication, getAllApplications, deleteJobApplication };
+
