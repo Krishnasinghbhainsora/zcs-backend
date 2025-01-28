@@ -1,7 +1,12 @@
 const express = require("express");
 const multer = require("multer");
 const path = require("path");
-const { submitJobApplication, getAllApplications, deleteJobApplication } = require("../controllers/JobApplicationController");
+const {
+  submitJobApplication,
+  getAllApplications,
+  downloadResume,
+  deleteJobApplication,
+} = require("../controllers/JobApplicationController");
 
 const router = express.Router();
 
@@ -31,9 +36,8 @@ const upload = multer({
 });
 
 router.post("/submit", upload.single("resume"), submitJobApplication);
-
 router.get("/", getAllApplications);
-
+router.get("/download/:filename", downloadResume);
 router.delete("/:id", deleteJobApplication);
 
 module.exports = router;

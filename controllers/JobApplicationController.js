@@ -1,4 +1,5 @@
 const JobApplication = require("../models/JobApplictionModel");
+const path = require("path");
 
 // Create a new job application
 const submitJobApplication = async (req, res) => {
@@ -6,15 +7,7 @@ const submitJobApplication = async (req, res) => {
     const { name, mobile, email, experience, position, city, info } = req.body;
     const resume = req.file ? req.file.path : null;
 
-    if (
-      !name ||
-      !mobile ||
-      !email ||
-      !experience ||
-      !position ||
-      !city ||
-      !resume
-    ) {
+    if (!name || !mobile || !email || !experience || !position || !city || !resume) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -25,8 +18,7 @@ const submitJobApplication = async (req, res) => {
 
     if (existingApplication) {
       return res.status(400).json({
-        message:
-          "This email or mobile number is already associated with an application.",
+        message: "This email or mobile number is already associated with an application.",
       });
     }
 
@@ -60,6 +52,25 @@ const getAllApplications = async (req, res) => {
   }
 };
 
+// Download a resume
+const downloadResume = async (req, res) => {
+  try {
+    const { filename } = req.params; // Extract filename from request parameters
+    const filePath = path.join(__dirname, "../uploads", filename);
+
+    res.download(filePath, (err) => {
+      if (err) {
+        console.error(err);
+        return res.status(404).json({ message: "File not found" });
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error. Please try again later." });
+  }
+};
+
+
 // Delete a job application by ID
 const deleteJobApplication = async (req, res) => {
   try {
@@ -77,4 +88,9 @@ const deleteJobApplication = async (req, res) => {
   }
 };
 
-module.exports = { submitJobApplication, getAllApplications, deleteJobApplication };
+module.exports = {
+  submitJobApplication,
+  getAllApplications,
+  downloadResume,
+  deleteJobApplication,
+};
