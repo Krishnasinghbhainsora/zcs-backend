@@ -20,6 +20,7 @@ const fileFilter = (req, file, cb) => {
     cb("Only .pdf, .doc, .docx formats are allowed!");
   }
 };
+
 const upload = multer({ storage, fileFilter }).single("resume");
 
 module.exports = upload;
