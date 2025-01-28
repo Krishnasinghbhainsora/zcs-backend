@@ -1,6 +1,6 @@
 const express = require("express");
 const { submitJobApplication, getAllApplications, deleteJobApplication } = require("../controllers/JobApplicationController");
-const upload = require("../middleware/upload");
+const upload = require("../middlewares/Upload");
 
 const router = express.Router();
 
