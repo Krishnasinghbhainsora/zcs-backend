@@ -1,4 +1,4 @@
-const JobApplication = require("../models/JobApplicationModel");
+const JobApplication = require("../models/JobApplictionModel");
 
 // Create a new job application
 const submitJobApplication = async (req, res) => {
