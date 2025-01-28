@@ -23,7 +23,7 @@ app.use("/admin", adminRoutes);
 
 // MongoDB Connection
 mongoose
-  .connect(process.env.MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGODB_URL)
   .then(() => console.log("Connected to MongoDB Successfully"))
   .catch((err) => console.error("Error connecting to MongoDB", err));
 
