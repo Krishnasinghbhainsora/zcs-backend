@@ -18,6 +18,10 @@ if (!fs.existsSync("uploads")) {
   fs.mkdirSync("uploads");
 }
 
+app.get("/", (req, res) => {
+  res.send("Welcome to the Job Application API!");
+});
+
 // Middleware
 app.use(cors());
 app.use(morgan("dev"));
@@ -27,6 +31,11 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // Serve u
 // Routes
 app.use("/job-application", jobApplicationRoutes);
 app.use("/admin", adminRoutes);
+
+app.use((req, res) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
 
 // MongoDB Connection
 mongoose
