@@ -1,27 +1,24 @@
 const JobApplication = require("../models/JobApplictionModel");
 const path = require("path");
+const fs = require("fs");
 
-// Create a new job application
+// Submit a new job application
 const submitJobApplication = async (req, res) => {
   try {
     const { name, mobile, email, experience, position, city, info } = req.body;
-    const resume = req.file ? req.file.path : null;
+    const resume = req.file ? req.file.filename : null;
 
     if (!name || !mobile || !email || !experience || !position || !city || !resume) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ message: "All fields are required." });
     }
 
-    // Check if email or mobile already exists
-    const existingApplication = await JobApplication.findOne({
-      $or: [{ email }, { mobile }],
-    });
-
+    // Check for existing application
+    const existingApplication = await JobApplication.findOne({ $or: [{ email }, { mobile }] });
     if (existingApplication) {
-      return res.status(400).json({
-        message: "This email or mobile number is already associated with an application.",
-      });
+      return res.status(400).json({ message: "Email or mobile number already exists." });
     }
 
+    // Save application
     const newApplication = new JobApplication({
       name,
       mobile,
@@ -52,16 +49,21 @@ const getAllApplications = async (req, res) => {
   }
 };
 
-// Download a resume
-const downloadResume = async (req, res) => {
+// Download resume
+const downloadResume = (req, res) => {
   try {
-    const { filename } = req.params; // Extract filename from request parameters
+    const { filename } = req.params;
     const filePath = path.join(__dirname, "../uploads", filename);
+
+    // Check if file exists
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ message: "File not found." });
+    }
 
     res.download(filePath, (err) => {
       if (err) {
         console.error(err);
-        return res.status(404).json({ message: "File not found" });
+        res.status(500).json({ message: "Error downloading file." });
       }
     });
   } catch (error) {
@@ -70,18 +72,17 @@ const downloadResume = async (req, res) => {
   }
 };
 
-
-// Delete a job application by ID
+// Delete job application
 const deleteJobApplication = async (req, res) => {
   try {
     const { id } = req.params;
     const application = await JobApplication.findByIdAndDelete(id);
 
     if (!application) {
-      return res.status(404).json({ message: "Application not found" });
+      return res.status(404).json({ message: "Application not found." });
     }
 
-    res.status(200).json({ message: "Application deleted successfully" });
+    res.status(200).json({ message: "Application deleted successfully." });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error. Please try again later." });
