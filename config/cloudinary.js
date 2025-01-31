@@ -15,8 +15,8 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "resumes", // Cloudinary folder for resumes
-    format: async (req, file) => "pdf",
-    public_id: (req, file) => Date.now() + "-" + file.originalname,
+    resource_type: "raw", 
+    allowed_formats: ["pdf", "doc", "docx"], // Allowed formats
   },
 });
 
