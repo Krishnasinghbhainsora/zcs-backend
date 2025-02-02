@@ -26,6 +26,7 @@ app.get("/", (req, res) => {
 app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads"))); // Serve uploaded files
 
 // Routes
